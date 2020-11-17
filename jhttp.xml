@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<server>
+ <port>8080</port>
+ <log>jhttp.log</log>
+ <timeout>60000</timeout>
+ <defaultmime>text/html</defaultmime>
+ <host>
+  <hostname>localhost</hostname>
+  <root>www/</root>
+  <default>yes</default>
+  <symlinks>yes</symlinks>
+  <directorylisting>yes</directorylisting>
+  <index>
+   <document priority="1">index.php</document>
+   <document priority="2">index.html</document>
+   <document priority="3">index.htm</document>
+  </index>  
+  <header>
+   <type>Content-Language</type>
+   <content>en-GB</content>
+  </header>
+  <document>
+   <path>/sub/1</path>
+   <status>301</status>
+   <header>
+    <type>Content-Language</type>
+    <content>en-US</content>
+   </header>
+   <header>
+    <type>Location</type>
+    <content>/sub/2</content>
+   </header>
+  </document>
+  <document>
+   <path>/sub/2</path>
+   <status>301</status>
+   <header>
+    <type>Content-Language</type>
+    <content>en-GB</content>
+   </header>
+   <header>
+    <type>Location</type>
+    <content>/sub/3</content>
+   </header>
+  </document>
+  <document>
+   <path>/sub/auth.html</path>
+   <auth>
+    <type>Basic</type>
+    <realm>Authenticate</realm>
+    <file>auth</file>
+   </auth>
+  </document>
+ </host>
+ <host>
+  <hostname>test</hostname>
+  <root>www2/</root>
+  <default>no</default>
+  <symlinks>no</symlinks>
+  <index>
+   <document priority="1">index.php</document>
+   <document priority="2">index.html</document>
+   <document priority="3">index.htm</document>
+  </index>  
+  <error>
+   <code>404</code>
+   <document>/error/404.html</document>
+  </error> 
+ </host>
+</server>
