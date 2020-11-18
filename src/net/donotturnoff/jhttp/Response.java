@@ -2,34 +2,29 @@ package net.donotturnoff.jhttp;
 
 import java.net.*;
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
 import java.util.zip.*;
 import java.util.logging.*;
 
 public class Response {
-	
-	private JHTTP server;
-	private Connection conn;
-	private Request request;
-	private Socket s;
-	private Config cfg;
-	private Logger log;
+
+	private final Request request;
+	private final Socket s;
+	private final Config cfg;
+	private final Logger log;
 	private DataOutputStream headerOut;
 	private OutputStream bodyOut;
-	private Status status;
-	private Headers headers;
-	private Document document;
+	private final Status status;
+	private final Headers headers;
+	private final Document document;
 	
 	public Response(JHTTP server, Connection conn, RequestHandler handler) {
 		this(server, conn, handler.getStatus(), handler.getHeaders(), handler.getDocument());
 	}
 	
 	public Response(JHTTP server, Connection conn, Status status, Headers headers, Document document) {
-		this.server = server;
 		this.log = server.getLog();
 		this.cfg = server.getServerConfig();
-		this.conn = conn;
 		this.request = conn.getRequest();
 		this.s = conn.getSocket();
 		this.status = status;

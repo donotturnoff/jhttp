@@ -4,13 +4,12 @@ import java.net.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.logging.*;
 
 public class PHPHandler extends RequestHandler {
 	
 	public final static String[] mimes = {"text/php", "text/x-php", "application/php", "application/x-php", "application/x-httpd-php", "application/x-httpd-php-source"};
 	
-	private final static String extractExtension(Path path) {
+	private static String extractExtension(Path path) {
 		String fileName = path.toString();
 		String extension = "";
 		int i = fileName.lastIndexOf('.');
@@ -21,7 +20,7 @@ public class PHPHandler extends RequestHandler {
 		return extension;
 	}
 	
-	public final static boolean isPHP(Path path) throws IOException {
+	public static boolean isPHP(Path path) throws IOException {
 		File file = new File(path.toString());
 		String type = Files.probeContentType(path);
 		if (type == null) {

@@ -8,27 +8,25 @@ import java.util.logging.*;
 
 public class Request {
 	
-	private JHTTP server;
-	private Connection conn;
-	private Socket s;
-	private Config cfg;
-	private Logger log;
+	private final JHTTP server;
+	private final Connection conn;
+	private final Logger log;
 	private BufferedReader in;
 	private String request;
-	private ArrayList<String> lines;
+	private final ArrayList<String> lines;
 	private String verb, path, queryString, protocol, body;
-	private Headers headers;
+	private final Headers headers;
 	private Host host;
 	
 	public Request(JHTTP server, Connection conn) {
 		this.server = server;
 		this.log = server.getLog();
-		this.cfg = server.getServerConfig();
+		Config cfg = server.getServerConfig();
 		this.conn = conn;
-		this.s = conn.getSocket();
+		Socket s = conn.getSocket();
 		
 		request = "";
-		lines = new ArrayList<String>(20);
+		lines = new ArrayList<>(20);
 		headers = new Headers();
 		
 		verb = "";
@@ -47,7 +45,7 @@ public class Request {
 		RequestHandler handler = null;
 		try {
 			int length = 0;
-			String line = "";
+			String line;
 			StringBuilder requestBuilder = new StringBuilder();
 			
 			/* 
@@ -67,7 +65,7 @@ public class Request {
 							length = 0;
 						}
 					}
-					requestBuilder.append(line + "\r\n");
+					requestBuilder.append(line).append("\r\n");
 					lines.add(line);
 				}
 			} catch (NullPointerException e) {

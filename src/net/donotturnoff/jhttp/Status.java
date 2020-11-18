@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 public class Status {
 	
-	private static final HashMap<String, String> codes = new HashMap<String, String>();
-	private static final HashMap<String, String> groups = new HashMap<String, String>();
+	private static final HashMap<String, String> codes = new HashMap<>();
+	private static final HashMap<String, String> groups = new HashMap<>();
 	
 	static {
 		codes.put("100", "Continue");
@@ -109,7 +109,8 @@ public class Status {
 		}
 	}
 	
-	private String code, message;
+	private final String code;
+	private final String message;
 	
 	public Status(String code) throws IllegalArgumentException {
 		if (isCode(code)) {

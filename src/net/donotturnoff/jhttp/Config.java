@@ -3,8 +3,8 @@ package net.donotturnoff.jhttp;
 import java.util.HashMap;
 
 public class Config {
-	private HashMap<String, String> config;
-	private HashMap<String, String> defaults;
+	private final HashMap<String, String> config;
+	private final HashMap<String, String> defaults;
 	
 	public Config() {
 		config = new HashMap<>();

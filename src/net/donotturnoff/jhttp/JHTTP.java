@@ -2,7 +2,6 @@ package net.donotturnoff.jhttp;
 
 import java.net.*;
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.logging.*;
 import javax.naming.ConfigurationException;
@@ -19,15 +18,15 @@ public class JHTTP {
 	
 	private ServerSocket s;
 	private Socket c;
-	private Logger log;
+	private final Logger log;
 	private Config serverConfig;
 	private HashMap<String, Host> hosts;
-	private ArrayList<Connection> connections;
+	private final ArrayList<Connection> connections;
 	
 	public JHTTP() {
 		log = Logger.getLogger(JHTTP.class.getName());
 		log.setLevel(Level.ALL);
-		loadConfig("jhttp.xml");
+		loadConfig();
 		
 		String logfile = serverConfig.get("log");
 		
@@ -48,13 +47,13 @@ public class JHTTP {
 			}
 		}
 		
-		connections = new ArrayList<Connection>(20);
+		connections = new ArrayList<>(20);
 	}
 	
-	private void loadConfig(String path) {
+	private void loadConfig() {
 		ConfigHandler handler;
 		try {
-			handler = new ConfigHandler(path);
+			handler = new ConfigHandler("jhttp.xml");
 			serverConfig = handler.getServerConfig();
 			hosts = handler.getHosts();
 			log.log(Level.INFO, "Loaded config file");
@@ -101,20 +100,18 @@ public class JHTTP {
 			port = Integer.parseInt(serverConfig.get("port"));
 			s = new ServerSocket(port);
 			log.log(Level.INFO, "Server started on port " + port + " as " + System.getProperty("user.name"));
-		} catch (IOException e) {
-			log.log(Level.SEVERE, "Could not start server on port " + port, e);
-			exit(2);
-		} catch (NumberFormatException e) {
+		} catch (IOException | NumberFormatException e) {
 			log.log(Level.SEVERE, "Could not start server on port " + port, e);
 			exit(2);
 		}
-		
+
 		/*
 		 * Main loop of server:
 		 * 1. Accept new connection
 		 * 2. Create new threaded Connection object to handle it
 		 * 3. Start connection handling
 		 */
+		//noinspection InfiniteLoopStatement
 		while (true) {
 			try {
 				Socket client = s.accept();
@@ -148,7 +145,7 @@ public class JHTTP {
 			returnValue = 5;
 		} finally {
 			log.log(Level.INFO, "Exiting with status " + returnValue);
-			System.exit(returnValue);
 		}
+		System.exit(returnValue);
 	}
 }

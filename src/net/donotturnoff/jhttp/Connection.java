@@ -3,20 +3,18 @@ package net.donotturnoff.jhttp;
 import java.net.*;
 import java.io.*;
 import java.util.logging.*;
-import java.util.Properties;
 
 public class Connection extends Thread {
 	
-	private JHTTP server;
-	private Socket s;
+	private final JHTTP server;
+	private final Socket s;
 	private Request request;
-	private Config cfg;
-	private Logger log;
+	private final Logger log;
 	
 	public Connection(JHTTP server, Socket s) {
 		this.server = server;
 		this.log = server.getLog();
-		this.cfg = server.getServerConfig();
+		Config cfg = server.getServerConfig();
 		this.s = s;
 		
 		try {

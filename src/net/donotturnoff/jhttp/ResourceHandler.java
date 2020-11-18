@@ -1,10 +1,8 @@
 package net.donotturnoff.jhttp;
 
-import java.net.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.logging.*;
 
 public class ResourceHandler extends RequestHandler {
 	public ResourceHandler(JHTTP server, Request request) {
@@ -56,6 +54,9 @@ public class ResourceHandler extends RequestHandler {
 		} catch (IOException e) {
 			handler = new ErrorHandler(server, request, new Status("500"), "An IO error occurred while reading " + request.getPath());
 		} finally {
+			if (handler == null) {
+				handler = new ErrorHandler(server, request, new Status("500"), "No suitable handler could be found");
+			}
 			status = handler.getStatus();
 			headers = handler.getHeaders();
 			document = handler.getDocument();
@@ -66,7 +67,7 @@ public class ResourceHandler extends RequestHandler {
 		}
 	}
 	
-	private boolean authenticate(String path, String credentials) throws IOException, FileNotFoundException {
+	private boolean authenticate(String path, String credentials) throws IOException {
 		/* Searches for given credentials in credentials file. */
 		BufferedReader authReader = new BufferedReader(new FileReader(new File(path)));
 		String line;

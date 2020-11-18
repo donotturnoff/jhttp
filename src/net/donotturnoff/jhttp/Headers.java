@@ -6,7 +6,7 @@ public class Headers {
 	private HashMap<String, String> headers;
 	
 	public Headers() {
-		setHeaders(new HashMap<String, String>());
+		setHeaders(new HashMap<>());
 	}
 	
 	public Headers(HashMap<String, String> headers) {

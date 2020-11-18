@@ -21,7 +21,7 @@ public class ErrorHandler extends RequestHandler {
 		String errorDocPath = host.get(code);
 		
 		/* Add custom message to list of messages. */
-		ArrayList<String> messages = new ArrayList<String>();
+		ArrayList<String> messages = new ArrayList<>();
 		if (message.trim().length() > 0) {
 			messages.add(message);
 		}
@@ -60,16 +60,12 @@ public class ErrorHandler extends RequestHandler {
 				/* If the defined error document cannot be read, add a new error message to the message list. */
 				if (!errorDocPath.equals("")) {
 					String newMessage = "Could not read " + errorDocPath + ": " + e.toString();
-					if (newMessage != null) {
-						messages.add(newMessage);
-					}
+					messages.add(newMessage);
 				}
 			} catch (IllegalArgumentException e2) {
 				log.log(Level.FINEST, "Could not create error document for non-error code " + code, e2);
 				String newMessage2 = "Could not create error document: " + e2.toString();
-				if (newMessage2 != null) {
-					messages.add(newMessage2);
-				}
+				messages.add(newMessage2);
 				status = new Status("500");
 			} finally {
 				

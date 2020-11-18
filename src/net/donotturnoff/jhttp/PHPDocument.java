@@ -1,15 +1,11 @@
 package net.donotturnoff.jhttp;
 
-import java.net.*;
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
-import java.util.regex.*;
-import java.util.logging.*;
 
 public class PHPDocument extends Document {
 	
-	private Headers phpHeaders;
+	private final Headers phpHeaders;
 	
 	public PHPDocument(JHTTP server, InputStream in, InputStream err) {
 		super(server);
@@ -34,21 +30,21 @@ public class PHPDocument extends Document {
 				String value = String.join(":", tail).trim(); 
 				phpHeaders.setHeader(key, value);
 			}
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 		
 		/* Read all incoming data from php-cgi's output stream. */
 		try {
 			while ((inLine = bin.readLine()) != null) {
 				sb.append(inLine).append("\n");
 			}
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 		
 		/* Read all incoming data from php-cgi's error stream. */
 		try {
 			while ((errLine = berr.readLine()) != null) {
 				sb.append(errLine).append("\n");
 			}
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 		
 		data = sb.toString().getBytes();
 		

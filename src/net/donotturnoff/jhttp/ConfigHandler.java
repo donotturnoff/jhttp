@@ -9,8 +9,8 @@ import javax.naming.ConfigurationException;
 
 public class ConfigHandler {
 	
-	private Config serverConfig;
-	private HashMap<String, Host> hosts;
+	private final Config serverConfig;
+	private final HashMap<String, Host> hosts;
 	
 	public ConfigHandler(String path) throws ConfigurationException, ParserConfigurationException, SAXException, IOException {
 		serverConfig = new Config();
@@ -75,8 +75,8 @@ public class ConfigHandler {
 	
 	private Host handleHost(Node hostNode) throws ConfigurationException {
 		Config hostConfig = new Config();
-		HashMap<String, Config> documentConfigs = new HashMap<String, Config>();
-		String headers = "";
+		HashMap<String, Config> documentConfigs = new HashMap<>();
+		StringBuilder headers = new StringBuilder();
 		NodeList nodes = hostNode.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
@@ -85,30 +85,38 @@ public class ConfigHandler {
 				Element element = (Element) node;
 				
 				String name = element.getTagName();
-				if (name.equals("document")) {
-					String path = element.getElementsByTagName("path").item(0).getTextContent();
-					documentConfigs.put(path, handleDocument(node));
-				} else if (name.equals("index")) {
-					hostConfig.put(element.getTagName(), handleIndex(node));
-				} else if (name.equals("error")) {
-					String code = element.getElementsByTagName("code").item(0).getTextContent();
-					String path = element.getElementsByTagName("document").item(0).getTextContent();
-					hostConfig.put(code, path);
-				} else if (name == "header") {
-					headers += handleHeader(node);
-				}  else {
-					if (name.equals("default") && element.getTextContent().equals("yes")) {
-						String hostname = ((Element) hostNode).getElementsByTagName("hostname").item(0).getTextContent();
-						serverConfig.put("defaultHost", hostname);
+				switch (name) {
+					case "document": {
+						String path = element.getElementsByTagName("path").item(0).getTextContent();
+						documentConfigs.put(path, handleDocument(node));
+						break;
 					}
-					hostConfig.put(element.getTagName(), element.getTextContent());
+					case "index":
+						hostConfig.put(element.getTagName(), handleIndex(node));
+						break;
+					case "error": {
+						String code = element.getElementsByTagName("code").item(0).getTextContent();
+						String path = element.getElementsByTagName("document").item(0).getTextContent();
+						hostConfig.put(code, path);
+						break;
+					}
+					case "header":
+						headers.append(handleHeader(node));
+						break;
+					default:
+						if (name.equals("default") && element.getTextContent().equals("yes")) {
+							String hostname = ((Element) hostNode).getElementsByTagName("hostname").item(0).getTextContent();
+							serverConfig.put("defaultHost", hostname);
+						}
+						hostConfig.put(element.getTagName(), element.getTextContent());
+						break;
 				}
 				
 			}
 		}
 		
 		String hostname = hostConfig.get("hostname");
-		hostConfig.put("headers", headers);
+		hostConfig.put("headers", headers.toString());
 		return new Host(hostname, hostConfig, documentConfigs);
 	}
 	
@@ -139,7 +147,7 @@ public class ConfigHandler {
 	private Config handleDocument(Node documentNode) {
 		NodeList nodes = documentNode.getChildNodes();
 		Config config = new Config();
-		String headers = "";
+		StringBuilder headers = new StringBuilder();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
 			
@@ -147,19 +155,19 @@ public class ConfigHandler {
 				Element element = (Element) node;
 				
 				String name = element.getTagName();
-				if (name == "header") {
-					headers += handleHeader(node);
-				} else if (name == "auth") {
+				if (name.equals("header")) {
+					headers.append(handleHeader(node));
+				} else if (name.equals("auth")) {
 					config.put("authType", "Basic");
 					config.put("authRealm", "");
 					config.put("authFile", "");
-					config = handleAuth(node, config);
+					handleAuth(node, config);
 				} else {
 					config.put(element.getTagName(), element.getTextContent());
 				}
 			}
 		}
-		config.put("headers", headers);
+		config.put("headers", headers.toString());
 		return config;
 	}
 	
@@ -183,7 +191,7 @@ public class ConfigHandler {
 		return type + ":" + content + "\r\n";
 	}
 	
-	private Config handleAuth(Node authNode, Config existingConfig) {
+	private void handleAuth(Node authNode, Config existingConfig) {
 		NodeList nodes = authNode.getChildNodes();
 		
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -191,17 +199,20 @@ public class ConfigHandler {
 			
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element) node;
-				
-				if (element.getTagName().equals("type")) {
-					existingConfig.put("authType", element.getTextContent());
-				} else if (element.getTagName().equals("realm")) {
-					existingConfig.put("authRealm", element.getTextContent());
-				} else if (element.getTagName().equals("file")) {
-					existingConfig.put("authFile", element.getTextContent());
+
+				switch (element.getTagName()) {
+					case "type":
+						existingConfig.put("authType", element.getTextContent());
+						break;
+					case "realm":
+						existingConfig.put("authRealm", element.getTextContent());
+						break;
+					case "file":
+						existingConfig.put("authFile", element.getTextContent());
+						break;
 				}
 			}
 		}
-		return existingConfig;
 	}
 	
 	public Config getServerConfig() {

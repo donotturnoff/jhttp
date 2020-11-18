@@ -1,27 +1,17 @@
 package net.donotturnoff.jhttp;
 
-import java.net.*;
-import java.io.*;
-import java.nio.file.*;
 import java.util.*;
-import java.util.regex.*;
 import java.util.logging.*;
 
 public class ErrorDocument extends Document {
-	
-	private Status status;
-	private ArrayList<String> messages;
-	
+
 	public ErrorDocument(JHTTP server, Status status) {
-		this(server, status, new ArrayList<String>());
+		this(server, status, new ArrayList<>());
 	}
 	
 	public ErrorDocument(JHTTP server, Status status, ArrayList<String> messages) throws IllegalArgumentException {
 		super(server);
-		
-		this.status = status;
-		this.messages = messages;
-		
+
 		/* Produce error document if the given status code is 4xx or 5xx and is a valid code. */
 		if (status.isError()) {
 			StringBuilder docBuilder = new StringBuilder();

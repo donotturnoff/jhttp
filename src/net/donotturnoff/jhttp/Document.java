@@ -1,10 +1,7 @@
 package net.donotturnoff.jhttp;
 
-import java.net.*;
 import java.io.*;
 import java.nio.file.*;
-import java.util.*;
-import java.util.regex.*;
 import java.util.logging.*;
 
 public class Document {

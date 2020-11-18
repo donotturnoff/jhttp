@@ -1,8 +1,5 @@
 package net.donotturnoff.jhttp;
 
-import java.net.*;
-import java.io.*;
-import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.*;
@@ -29,7 +26,7 @@ public class RequestHandler {
 		this(server);
 		this.request = request;
 		
-		RequestHandler handler = null;
+		RequestHandler handler;
 		String verb = request.getVerb();
 		if (validateSyntax()) {
 			
@@ -65,8 +62,7 @@ public class RequestHandler {
 		/* To do: add more validation checks. */
 		if (request.getProtocol().equals("HTTP/1.1")) {
 			/* If using HTTP 1.1, the Host header must be set. */
-			boolean valid = request.getHeader("Host").length() > 0;
-			return valid;
+			return request.getHeader("Host").length() > 0;
 		} else {
 			return true;
 		}

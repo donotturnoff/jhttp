@@ -3,9 +3,9 @@ package net.donotturnoff.jhttp;
 import java.util.HashMap;
 
 public class Host {
-	private String hostname;
-	private Config hostConfig;
-	private HashMap<String, Config> documentConfigs;
+	private final String hostname;
+	private final Config hostConfig;
+	private final HashMap<String, Config> documentConfigs;
 	
 	public Host(String hostname, Config hostConfig, HashMap<String, Config> documentConfigs) {
 		this.hostname = hostname;
@@ -40,13 +40,13 @@ public class Host {
 	}
 	
 	public String toString() {
-		String returnValue = "";
+		StringBuilder returnValue = new StringBuilder();
 		for (HashMap.Entry<String, String> entry: hostConfig.getConfig().entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
-			returnValue += key + " => " + value + "\n";
+			returnValue.append(key).append(" => ").append(value).append("\n");
 		}
 		
-		return returnValue;
+		return returnValue.toString();
 	}
 }
